@@ -1,0 +1,175 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="td-model">
+	<template>
+	     <iron-ajax
+	     	auto
+	     	url="http://localhost:8080/tasks"
+	     	handle-as="json"
+	     	last-response="{{items}}"></iron-ajax>
+	     <iron-ajax
+	     	id="post"
+	     	url="http://localhost:8080/tasks"
+	     	handle-as="json"
+	     	method="POST"></iron-ajax>
+	     <iron-ajax
+	     	id="delete"
+	     	handle-as="json"
+	     	method="DELETE"></iron-ajax>
+	     <iron-ajax
+	     	id="patch"
+	     	handle-as="json"
+	     	method="PATCH"></iron-ajax>
+	</template>
+	<script>
+		(function () {
+			'use strict';
+
+			const BASE_URL = 'http://localhost:8080/tasks/';
+
+			Polymer({
+				is: 'td-model',
+
+				hostAttributes: {
+					hidden: true
+				},
+
+				properties: {
+					items: {
+						type: Array,
+						notify: true
+					},
+					filter: {
+						type: String
+					}
+				},
+
+				observers: [
+					'itemsAddedOrRemoved(items.splices)',
+					'itemsUpdated(items.*)'
+				],
+
+				_initializeDefaultTodos: function () {
+					this.items = [];
+				},
+
+				newItem: function(label) {
+					label = String(label).trim();
+
+					if (!label) {
+						return;
+					}
+
+					// deduce the ID
+					var id = 0;
+					this.items.forEach(function(itm, idx) {
+						if (id < itm.id) {
+							id = itm.id;
+						}
+					});
+					id++;
+
+					var item = {id: id, label: label, isCompleted: false};
+					this.push('items', item);
+				},
+
+				getCompletedCount: function () {
+					return this.items ? this.items.filter(this.filters.completed).length : 0;
+				},
+
+				getActiveCount: function () {
+					return this.items.length - this.getCompletedCount(this.items);
+				},
+
+				matchesFilter: function(item, filter) {
+					var fn = this.filters[filter];
+					return fn ? fn(item) : true;
+				},
+
+				destroyItem: function(item) {
+					var i = this.items.indexOf(item);
+					if (i > -1) {
+						this.splice('items', i, 1)
+					}
+				},
+
+				clearCompletedItems: function () {
+					this.items = this.items.filter(this.filters.active);
+				},
+
+				setItemsCompleted: function(completed) {
+					for (var i = 0; i < this.items.length; ++i) {
+						this.set(['items', i, 'isCompleted'], completed);
+					}
+				},
+
+				_apiPost: function(item) {
+					console.log('POST', item);
+					this.$.post.body = JSON.stringify(item);
+					this.$.post.generateRequest();
+				},
+
+				_apiPatch: function(item, property) {
+					console.log('PATCH', item, property);
+					var json = {};
+					json[property] = item[property];
+					this.$.patch.url = BASE_URL + item.id;
+					this.$.patch.body = JSON.stringify(json);
+					this.$.patch.generateRequest();
+				},
+
+				_apiDelete: function(item) {
+					console.log('DELETE', item);
+					this.$.delete.url = BASE_URL + item.id;
+					this.$.delete.generateRequest();
+				},
+
+				itemsAddedOrRemoved: function(changeRecord) {
+					changeRecord = changeRecord || false;
+					if (!changeRecord) {
+						return;
+					}
+
+					changeRecord.indexSplices.forEach(function(s) {
+						if (s.addedKeys && s.addedKeys.length === 1) {
+							var k = s.addedKeys[0].replace('#', '');
+							this._apiPost(this.items[k]);
+						}
+						s.removed.forEach(function(item) {
+							this._apiDelete(item);
+						});
+					}, this);
+				},
+
+				itemsUpdated: function(changeRecord) {
+					var idx = /\.\#(\d)\./.exec(changeRecord.path);
+					if (null === idx) {
+						return;
+					}
+
+					var item = this.items[idx[1]];
+
+					if (/.label/.test(changeRecord.path)) {
+						this._apiPatch(item, 'label');
+						return;
+					}
+
+					if (/.isCompleted/.test(changeRecord.path)) {
+						this._apiPatch(item, 'isCompleted');
+						return;
+					}
+				},
+
+				filters: {
+					active: function(item) {
+						return !item.isCompleted;
+					},
+					completed: function(item) {
+						return item.isCompleted;
+					}
+				}
+			});
+		})();
+	</script>
+</dom-module>
