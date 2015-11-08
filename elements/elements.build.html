@@ -17,6 +17,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 --></head><body><div hidden="" by-vulcanize=""><dom-module id="td-model" assetpath="/">
 	<template>
 	     <iron-ajax auto="" url="http://localhost:8080/tasks" handle-as="json" last-response="{{items}}"></iron-ajax>
+	     <iron-ajax id="post" url="http://localhost:8080/tasks" handle-as="json" method="POST"></iron-ajax>
+	     <iron-ajax id="delete" handle-as="json" method="DELETE"></iron-ajax>
+	     <iron-ajax id="patch" handle-as="json" method="PATCH"></iron-ajax>
 	</template>
 	</dom-module>
 <dom-module id="td-item" assetpath="/">
