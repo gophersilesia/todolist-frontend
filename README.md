@@ -5,7 +5,7 @@ This project is based on the official version of the Polymer TodoMVC, slightly m
 ### Get Started
 
 You will need to have `npm` and therefore `nodejs` installed locally.  
-See how to install it with [OSX](http://coolestguidesontheplanet.com/installing-node-js-osx-10-9-mavericks/), [Linux](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-an-ubuntu-14-04-server) and [Windows](http://blog.teamtreehouse.com/install-node-js-npm-windows).
+See how to install it for [OSX](http://coolestguidesontheplanet.com/installing-node-js-osx-10-9-mavericks/), [Linux](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-an-ubuntu-14-04-server) and [Windows](http://blog.teamtreehouse.com/install-node-js-npm-windows).
 
 *1.* Install the project dependencies with `bower`.
 
