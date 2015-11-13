@@ -70,7 +70,7 @@
 					});
 					id++;
 
-					var item = {id: id, label: label, isCompleted: false};
+					var item = {id: id, label: label, completed: false};
 					this.push('items', item);
 				},
 
@@ -100,7 +100,7 @@
 
 				setItemsCompleted: function(completed) {
 					for (var i = 0; i < this.items.length; ++i) {
-						this.set(['items', i, 'isCompleted'], completed);
+						this.set(['items', i, 'completed'], completed);
 					}
 				},
 
@@ -155,18 +155,18 @@
 						return;
 					}
 
-					if (/.isCompleted/.test(changeRecord.path)) {
-						this._apiPatch(item, 'isCompleted');
+					if (/.completed/.test(changeRecord.path)) {
+						this._apiPatch(item, 'completed');
 						return;
 					}
 				},
 
 				filters: {
 					active: function(item) {
-						return !item.isCompleted;
+						return !item.completed;
 					},
 					completed: function(item) {
-						return item.isCompleted;
+						return item.completed;
 					}
 				}
 			});

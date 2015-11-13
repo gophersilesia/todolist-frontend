@@ -6,7 +6,7 @@
 		<template is="dom-if" if="{{!editing}}">
 			<div on-dblclick="_editAction">
 				<input type="checkbox" class="toggle"
-							 checked="{{item.isCompleted::change}}">
+							 checked="{{item.completed::change}}">
 				<label>{{item.label}}</label>
 				<button class="destroy" on-tap="_destroyAction"></button>
 			</div>
@@ -39,12 +39,12 @@
 					},
 				},
 
-				observers: ['setHostClass(item.isCompleted, editing)'],
+				observers: ['setHostClass(item.completed, editing)'],
 
-				setHostClass: function(isCompleted, editing) {
+				setHostClass: function(completed, editing) {
 					// Note: TodoMVC has styling for classes. Too bad we can't use the
 					// editing property and reflectToAttribute.
-					this.toggleClass('completed', isCompleted);
+					this.toggleClass('completed', completed);
 					this.toggleClass('editing', editing);
 				},
 

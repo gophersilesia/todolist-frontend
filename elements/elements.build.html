@@ -26,7 +26,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	<template>
 		<template is="dom-if" if="{{!editing}}">
 			<div on-dblclick="_editAction">
-				<input type="checkbox" class="toggle" checked="{{item.isCompleted::change}}">
+				<input type="checkbox" class="toggle" checked="{{item.completed::change}}">
 				<label>{{item.label}}</label>
 				<button class="destroy" on-tap="_destroyAction"></button>
 			</div>
